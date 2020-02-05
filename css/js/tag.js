@@ -13,7 +13,7 @@ const colors = {
     body: '#25b6da',
     padrao: '#616161',
 
-    get(tag){
+    get(tag) {
         return this[tag] ? this[tag] : this[padrao]
     }
 }
@@ -23,7 +23,7 @@ document.querySelectorAll('.tag').forEach(elemento => {
 
     elemento.style.borderColor = colors.get(tagName)
 
-    if (!elemento.classList.contains('nolabel')){
+    if (!elemento.classList.contains('nolabel')) {
         const label = document.createElement('label')
         label.style.backgroundColor = colors.get(tagName)
         label.innerHTML = tagName
