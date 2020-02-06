@@ -61,3 +61,14 @@
     font-family: Pixel;
     font-size: 50px;
 }
+
+.menu a{
+    font-size: 50px;
+    display: flex;
+    align-self: center;
+    height: 50px;
+    width: 300px;
+    color: yellow;
+    font-family: Pixel;
+    text-decoration: none;
+}
