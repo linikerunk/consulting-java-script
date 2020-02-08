@@ -1,12 +1,25 @@
+const modoDev = process.env.NODE_ENV !== 'production'
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const UglifyJsPlugin  = require('uglifyjs-webpack-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
-    mode: 'development', // development production
+    mode: modoDev ? 'development' : 'production', // development production
     entry: './src/principal.js',
     output: {
         filename: 'principal.js',
         path: __dirname + '/public'
+    },
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true
+            }),
+            new OptimizeCSSAssetsPlugin({})
+        ]
+
     },
     plugins: [
         new MiniCssExtractPlugin({
@@ -15,11 +28,12 @@ module.exports = {
     ],
     module: {
         rules: [{
-            test: /\.css$/,
+            test: /\.s?[ac]ss$/,
             use: [
                 MiniCssExtractPlugin.loader,
                 // 'style-loader', // Adicionar dentro da DOM a tag <style> injetando o CSS
-                'css-loader' // interpretar os @imports, urls()....
+                'css-loader', // interpretar os @imports, urls()....
+                'sass-loader',
             ]
         }]
     }
