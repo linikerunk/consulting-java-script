@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Anatomia CSS</title>
+    <style>
+        .seletor {
+            color: #555;
+            font-size: 30px;
+            text-align: center;
+            border: dashed 5px navy;
+            font-family:  Helvetica, sans-serif, monospace;
+            width: calc(100% - 30px);
+            background-color: rgb(234, 13, 29);
+        }
+        /* usando uma pseudo-classe */
+        .seletor:hover {
+            background-color: yellowgreen;
+        }
+
+        /* usando pseudo-elemento */
+
+        .seletor::first-letter{
+            font-size: 50px;
+            font-weight: bold;
+        }
+        /* Padrão de estrutura DashCase ou CamelCase */
+    </style>
+</head>
+
+<body>
+    <div class="seletor">Conteúdo</div>
+</body>
+
+</html>

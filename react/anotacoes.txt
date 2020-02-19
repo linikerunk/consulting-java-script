@@ -1,0 +1,7 @@
+npm i -g create-react-app   # Criando de forma global o projeto do react!!
+                            # O React por baixo cria um build do WebPack, não precisamos ter acesso direto do webpack criado por ele...
+create-react-app <nome_do_projeto> # Com isso criamos um projeto react..
+1 - depois preciso entrar na pasta e exercutar o script  Ex: npm start  ( automaticamente starta a aplicação inicial)
+
+2- react, react-DOM para trabalhar com arquivos JSX -> HTML e JS injetado..
+3 - agora só ir vendo os outros arquivos
