@@ -5,6 +5,7 @@ import Primeiro from './componentes/Primeiro'
 import BomDia from './componentes/BomDia'
 
 import Multi from './componentes/Multiplos'  // posso usar o destructiring { BoaTarde, BoaNoite }
+import Saudacao from './componentes/Saudacao'
 
 const elemento = <h1> React 2</h1>
 
@@ -18,6 +19,12 @@ ReactDOM.render(
     <div>
         <Multi.BoaTarde nome="Ana" />
         <Multi.BoaNoite nome="Claudia" />
+    </div>, document.getElementById('root')
+)
+
+ReactDOM.render(
+    <div>
+        <Saudacao tipo="Bom dia" nome="Kleber"/>
     </div>, document.getElementById('root')
 )
 
