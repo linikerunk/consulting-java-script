@@ -7,6 +7,10 @@ import BomDia from './componentes/BomDia'
 import Multi from './componentes/Multiplos'  // posso usar o destructiring { BoaTarde, BoaNoite }
 import Saudacao from './componentes/Saudacao'
 
+import Pai from './componentes/Pai'
+import Filho from './componentes/Filho'
+
+
 const elemento = <h1> React 2</h1>
 
 ReactDOM.render(<h1>React 1</h1>, document.getElementById('root'))
@@ -24,9 +28,21 @@ ReactDOM.render(
 
 ReactDOM.render(
     <div>
-        <Saudacao tipo="Bom dia" nome="Kleber"/>
+        <Saudacao tipo="Bom dia" nome="Kleber" />
     </div>, document.getElementById('root')
 )
 
+ReactDOM.render(
+    <div>
+        <Pai nome="Paulo" sobrenome="Silva" >
+            <Filho nome="Pedro" />
+            <Filho nome="Paulo" />
+            <Filho nome="Carla" />
+
+            {/*  Como passo os componentes filhos aqui? */}
+        </Pai>
+
+    </div>, document.getElementById("root")
+)
 
 // JSX o primeiro parametro   --> exemplo: $('<h1>).html('React 2')

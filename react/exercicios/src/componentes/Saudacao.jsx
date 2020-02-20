@@ -8,10 +8,11 @@ export default class Saudacao extends Component {
         nome: this.props.nome
     }
 
-    constructor(props) {
+    constructor(props) { // função construtora que receberá parametro props
         super(props)
 
         this.setTipo = this.setTipo.bind(this)
+        // this.setNome = this.setNome.bind(this)
     }
 
     setTipo(e) {
