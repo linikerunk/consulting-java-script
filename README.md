@@ -1,5 +1,4 @@
 # Learning-JavaScript
-xxx
 
 One Paragraph of project description goes here
 
