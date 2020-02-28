@@ -1,0 +1,226 @@
+###COMANDO BÁSICOS DO MONGO####
+
+mongo -version           Verifica a versao do mongo
+cls limpa
+help -> opcoes 
+db. TAB 2x vê tudo que da para usar no mongo
+show dbs  --> mostra todos banco de dados
+
+use banco de dados
+
+db.createCollecton('estados')
+
+show collections
+(" MONGODB é CaseSensetive ")
+
+db.estados.drop()  -> Exclui todas as coleçoes do banco
+
+
+
+
+
+###INSERIR DADOS###
+
+INSERINDO DADOS EM UMA COLEÇÃO QUE NAO EXISTE AINDA
+
+db.estados.insert({nome: "Acre", sigla: "AC", regiao: "Norte"})
+# Ele cria a tabela caso não exista, e coloca o dado na mesma.
+
+db.estados.save({nome: "Alagoas", sigla: "AL", regiao:"Nordeste", populacao: 3322000})
+
+db.nome_tabela.find() -> consulta todos os objectos dentro da coleções
+
+db.nome_tabela.find().pretty() -> traz o objeto de forma estruturada -- JSON
+
+#Consigo inserir um array de elementos dentro do meu objeto que criei na coleção, exemplo :
+
+db.nome_tabela.insert({
+    nome: "Rio de Janeiro",
+    sigla: "RJ",
+    regiao: "Sudeste",
+    cidade[{
+        nome: "Niteroi",
+        area: 133.9,
+        populacao: 487562
+    }]
+})
+
+db.help()  -> Mostra todas opçoes....
+
+
+
+
+
+##DESAFIO INSERT ###
+
+db.estados.insert({
+    nome: "São Paulo",
+    sigla: "SP",
+    regiao: "Sudeste",
+    cidade: [{
+        _id: ObjectId(),
+        nome: "Campinas",
+        area: 795.7,
+        prefeito: "Jonas Donizette",
+        populacao: 1081000
+    }, {
+        _id: ObjectId(),
+        nome: "Garulhos",
+        populacao: 1325000
+    }, {
+        _id: ObjectId(),
+        nome: "Sorocaba",
+        distanciaCapital: 87,
+        populacao: 644919
+    }]
+})
+
+
+
+### CONSULTAS ###
+
+db.nome_tabela.find().pretty()   # Mostrar meus objetos
+db.nome_tabela.findOne() # Procuro um único objeto
+db.nome_tabela.findOne("Parametro") # procuro o objeto que passei no parametro...
+
+db.nome_tabela.find({$or: [{sigla: "RJ", {sigla: "AC"}}]}).pretty()  # Um ou outro
+db.nome_tabela.find({$and: [{sigla: "RJ", {sigla: "AC"}}]}).pretty() # tem que ser true nos dois objeto para passar
+
+db.nome_tabela.find({populacao: {$exists: true}})
+
+db.nome_tabela.find().skip(1) # pula o primeiro objeto
+db.nome_tabela.find().skip(1).limit(2) # pula o indece 1 e vai até o elemento 2 como limite
+
+
+db.nome_tabela.count() # Conto quantos elementos existe dentro da tabela...
+
+db.nome_tabela.find({sigla: "SP"}, {nome: 1, sigla: 1, _id: 0}) # Aqui to trazendo so os parametros que eu acho relevante, 1 ele traz 0 ele oculta..
+
+Consigo acessar um array dentro de um objeto ... exemplo:
+    db.nome_tabela.find({ sigla: "SP"}, {"cidades;nome": 1, _id: 0}) # Aqui estou trazendo todas as cidades dentro do estado de São Paulo
+
+
+
+
+### PADRAO PIPE AND FILTERS ... ###
+
+https://docs.mongodb.com/manual/introduction/
+
+
+### CONSULTAS 2 ###
+
+db.nome_tabela.aggregate([
+        { $project: {nome: 1, "cidades.nome": 1, _id: 0} }
+])
+
+
+#varios estagio do pipeline de agregação
+
+
+db.nome_tabela.aggregate([
+        { $project: {populacao: { $sum: "$cidade.populacao"}, sigla: 1; _id: 0 }},
+        { $group: { _id: null, populacao: {$sum: "populacao"}}},
+        { $project: {_id: 0, populacaoTotal: 1}},
+        ])
+
+
+### CONSULTA 3 ###
+
+db.nome_tabela.aggregate([
+    { $match: {"cidades.nome": "Sorocaba" } },
+    { $unwind: "$cidades" },
+    { $match: {"cidades.nome": "Sorocaaba" } },
+    { $project: {_id: "$cidades._id"} }
+]).pretty()
+
+
+
+
+### UPDATE ####
+
+db.nome_tabela.find().pretty()
+Usando o Update
+
+db.nome_tabela.update({ sigla: "SP"}, { $set: { populacao: 45340000 }})
+#Com isso ganha o populacao
+
+### Tbm posso fazer um update em cima de um array 
+
+db.nome_tabela.update({ sigla: "AL"}, { $set: { cidades: [{ nome: "Sergipe"}]}})
+↑↑↑↑↑ nesse caso irá dar certo pois meu objeto AL nao tinha nenhuma cidade e com isso nao sobrescreveu...
+
+db.nome_tabela.update(
+    {sigla: "SP"},
+    { $push: {cidades: {nome: "Santos", populacao: 433966 }}}
+)
+
+
+
+### REMOVE ####
+db.nome_tabela.count() # 4 objects
+db.nome_tabela.remove({ sigla: "AC" }) # 3 objects
+
+db.nome_tabela.remove({ populacao: { $exists: false }}, 1) # esse parametro 1 significa que vou limitar apenas para um registro..
+
+Atualizar ... 
+
+db.nome_tabela.update({ sigla: "RJ"}, { $set: {populacao: 16720000}})
+
+
+#excluindo
+
+db.nome_tabela.remove({populacao: { $lt: 2000000 }}) #lt == less than 2.000.000
+
+
+
+# Inserir Empresas .... 
+# inserindo pelo ObjectId do objeto..
+
+db.nome_tabela.insert({
+    nome: "Bradesco",
+    estadoId: ObjectId("5b76db6eaa53becb73c5ae7")
+})
+
+db.nome_tabela.insert({
+    nome: "Vale",
+    cidadeId: ObjectId("5b76db6e6aa53becb73c5ae6")
+})
+
+
+
+#CONSULTAS LOOKUP
+
+db.empresas.aggregate([
+    { $match: {nome: "Bradesco"}},
+    { $lookup: {
+        from: "estados",
+        localField: "estadoId",
+        foreignField: "_id",
+        as: "estado"
+    }},
+    { $unwind: "estado" }
+    ]).pretty()
+
+
+db.empresas.aggregate([
+    { $match: {nome: "Vale"}},
+    { $lookup: {
+        from: "estados",
+        localField: "cidadeId",
+        foreignField: "cidades._id",
+    }},
+    { $unwind: "$estado" },
+    { $unwind: "$estado.cidades" },
+    { $addFields: {mesmaCidade: {$cmp: ["$estado.cidades._id", "$cidadeId"]} } },
+    { $match: { mesmaCidade: 0 }},
+]).pretty()
+
+
+
+
+
+
+
+
+
+
