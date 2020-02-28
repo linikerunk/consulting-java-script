@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+const saudacao = require('')
 
 app.use((req, res, next) => {
     console.log("Antes...")
